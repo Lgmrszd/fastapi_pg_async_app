@@ -1,6 +1,5 @@
 import asyncio
 import pytest
-import pytest_asyncio
 from sqlalchemy.ext.asyncio import async_scoped_session
 from testcontainers.postgres import PostgresContainer
 
@@ -8,15 +7,9 @@ from fastapi_pg_async_app.config import Settings, PSQLModel
 from fastapi_pg_async_app.database import DBHolder
 
 
-@pytest.fixture(scope="session")
-def event_loop():
-    """
-    Override event_loop fixture used by pytest_asyncio to set its scope to session
-    """
-    policy = asyncio.get_event_loop_policy()
-    loop = policy.new_event_loop()
-    yield loop
-    loop.close()
+@pytest.fixture(scope='session')
+def anyio_backend():
+    return 'asyncio'
 
 
 @pytest.fixture(scope='session')
@@ -48,7 +41,7 @@ def postgres_instance(scoped_settings: Settings):
         yield psql
 
 
-@pytest_asyncio.fixture(scope='session')
+@pytest.fixture(scope='session')
 async def db_holder(scoped_settings, postgres_instance):
     db_holder_ = DBHolder(scoped_settings)
     await db_holder_.init_models()
@@ -58,7 +51,7 @@ async def db_holder(scoped_settings, postgres_instance):
     await db_holder_.engine.dispose()
 
 
-@pytest_asyncio.fixture(scope='session')
+@pytest.fixture(scope='session')
 async def db_session_factory(db_holder):
     session = async_scoped_session(
         db_holder.async_session,
@@ -68,7 +61,7 @@ async def db_session_factory(db_holder):
     await session.close()
 
 
-@pytest_asyncio.fixture(scope='session')
+@pytest.fixture(scope='session')
 async def db_session(db_session_factory):
     session_ = db_session_factory()
 

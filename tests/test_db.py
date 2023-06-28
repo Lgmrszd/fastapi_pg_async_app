@@ -1,28 +1,26 @@
-import asyncio
 import pytest
-import pytest_asyncio
 
 from fastapi_pg_async_app import crud, schemas, security
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_1(scoped_settings):
     print(scoped_settings)
     print(scoped_settings.database_url())
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_2(db_session):
     print(db_session)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_3(scoped_settings):
     print(scoped_settings)
     print(scoped_settings.database_url())
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_users(db_session):
     user1 = await crud.get_user(db_session, 1)
     assert user1 is None
@@ -41,7 +39,7 @@ async def test_users(db_session):
     assert user1 == user_new
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_users_again(db_session):
     user1 = await crud.get_user(db_session, 1)
     assert user1 is not None
