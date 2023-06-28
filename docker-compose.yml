@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  app:
+    image: fastapi_pg_async_app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: app_main
+    ports:
+      - "8000:8000"
+    environment:
+      PSQL__HOST: postgres
+      PSQL__USER: postgres
+      PSQL__PASSWORD: psqldevpass
+      PSQL__DB: postgres
+    depends_on:
+      postgres:
+        condition: service_started
+
+  postgres:
+    image: postgres:14-alpine
+    volumes:
+      - fastapi-psql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: psqldevpass
+
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    profiles:
+#      - debug
+#    volumes:
+#      - pgadmin4-datastore:/var/lib/pgadmin
+#    ports:
+#      - "8080:80"
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+#      - PGADMIN_DEFAULT_PASSWORD=admin
+#    deploy:
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+
+volumes:
+  fastapi-psql-data:
+#  pgadmin4-datastore:
