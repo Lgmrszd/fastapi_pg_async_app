@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  app:
+    volumes:
+      - ./fastapi_pg_async_app:/app/fastapi_pg_async_app
+    command: sh -c "python -m uvicorn --host 0.0.0.0 fastapi_pg_async_app.app:app --reload"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - pgadmin4-datastore:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+volumes:
+  pgadmin4-datastore:
