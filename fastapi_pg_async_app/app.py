@@ -44,8 +44,11 @@ async def get_user(user_id: int, session: SessionDep):
     return query
 
 
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users", response_model=schemas.User)
 async def create_user(user: schemas.UserCreate, session: SessionDep):
+    """
+    Create a new user
+    """
     existing_user = await crud.get_user_by_email(session, user.email) or await crud.get_user_by_username(session, user.username)
     if existing_user:
         raise HTTPException(status_code=400, detail=f"{'email' if existing_user.email == user.email else 'username'} "
@@ -56,6 +59,9 @@ async def create_user(user: schemas.UserCreate, session: SessionDep):
 
 @app.put("/users/{user_id}", response_model=schemas.User)
 async def update_user(user_id: int, user: schemas.UserUpdate, session: SessionDep):
+    """
+    Update user
+    """
     existing_user_email = await crud.get_user_by_email(session, user.email)
     existing_user_username = await crud.get_user_by_username(session, user.username)
     if existing_user_email and existing_user_email.id != user_id:
@@ -70,6 +76,9 @@ async def update_user(user_id: int, user: schemas.UserUpdate, session: SessionDe
 
 @app.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(user_id: int, session: SessionDep):
+    """
+    Delete user
+    """
     result = await crud.delete_user(session, user_id)
     if not result:
         raise HTTPException(status_code=404, detail="User not found")
