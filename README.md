@@ -29,9 +29,9 @@ python3 -m venv venv
 source venv/bin/activate
 # Install requirements, install pytest if testing is planned
 pip install -r requirements.txt
-pip install pytest~=7.4.0
+pip install pytest~=7.4.0 testcontainers~=3.7.1 testcontainers-postgres
 # Run tests
-python -m pytest testcontainers~=3.7.1 testcontainers-postgres
+python -m pytest
 # Run application (DB settings should be set as environment variables)
 export PSQL__HOST=localhost
 export PSQL__USER=postgres
